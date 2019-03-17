@@ -36,10 +36,11 @@ fn main() {
             .par_chunks_mut(WIDTH * LINES_PER_WORK_ITEM)
             .enumerate()
             .for_each(|(work_item, chunk)| {
-                for y in 0..LINES_PER_WORK_ITEM {
+                let lines = chunk.len() / WIDTH;
+                for y in 0..lines {
                     let line = y * WIDTH;
                     for x in 0..WIDTH {
-                        chunk[line + x] = run_tracer(x, (work_item * LINES_PER_WORK_ITEM) + y);
+                        chunk[line + x] = run_tracer(x, (work_item * lines) + y);
                     }
                 }
             });
