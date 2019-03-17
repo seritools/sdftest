@@ -83,8 +83,8 @@ fn run_tracer(x: usize, y: usize) -> u32 {
     let line_direction = Unit::new_normalize(far_view_point - near_view_point);
 
     // configure camera position/orientation
-    let eye = Point3::new(0., 0., -4.0);
-    let target = Point3::new(0., 0., 0.);
+    let eye = Point3::new(0., 0., -8.0);
+    let target = Point3::new(6., 0., 0.);
 
     // get camera to view mapping/isometry
     let camera = Isometry3::look_at_rh(&eye, &target, &Vector3::y());
@@ -111,7 +111,7 @@ fn sphere_trace(ray: Ray<f64>) -> u32 {
         let dist = {
             let mut sphere_pos: Point3<f64> = cur_pos;
 
-            let sphere_cell = p_mod1(&mut sphere_pos[0], 3.0);
+            p_mod1(&mut sphere_pos[0], 2.0);
             let sphere = sphere(sphere_pos, 1.);
             let floor = floor_y(cur_pos, -1.0);
             union(sphere, floor)
@@ -167,8 +167,13 @@ fn union_chamfer(a: f64, b: f64, r: f64) -> f64 {
 fn p_mod1(p: &mut f64, size: f64) -> f64 {
 	let halfsize = size * 0.5;
 	let c = ((*p + halfsize) / size).floor();
-	*p = ((*p + halfsize) % size) - halfsize;
+	*p = fmod(*p + halfsize, size) - halfsize;
     c
+}
+
+#[inline]
+fn fmod(x: f64, y: f64) -> f64 {
+    x - y * (x/y).floor()
 }
 
 #[derive(Debug)]
